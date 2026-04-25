@@ -1,0 +1,65 @@
+name: app_financeiro
+description: Aplicativo de controle financeiro pessoal
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP client
+  dio: ^5.4.0
+
+  # Estado (Riverpod)
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # Armazenamento seguro do token
+  flutter_secure_storage: ^9.0.0
+
+  # Preferências simples
+  shared_preferences: ^2.2.2
+
+  # Ícones
+  cupertino_icons: ^1.0.6
+  material_symbols_icons: ^4.2719.1
+
+  # Gráficos
+  fl_chart: ^0.67.0
+
+  # Formatação de moeda e data
+  intl: ^0.19.0
+
+  # Google Fonts (Poppins)
+  google_fonts: ^6.1.0
+
+  # Máscaras de input
+  mask_text_input_formatter: ^2.9.0
+
+  # Pull to refresh
+  pull_to_refresh: ^2.0.0
+
+  # Loading overlay
+  flutter_easyloading: ^3.0.5
+
+  # Formatação de moeda brasileira
+  currency_text_input_formatter: ^2.1.5
+
+  # Snackbar / Toast
+  fluttertoast: ^8.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.7
+  riverpod_generator: ^2.3.9
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

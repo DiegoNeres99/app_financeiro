@@ -1,0 +1,45 @@
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsDateString,
+  IsOptional,
+  IsBoolean,
+  IsIn,
+  MaxLength,
+  Min,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
+
+export class CreateIncomeDto {
+  @IsNotEmpty({ message: 'Descrição é obrigatória' })
+  @IsString()
+  @MaxLength(255)
+  description: string;
+
+  @IsNotEmpty({ message: 'Valor é obrigatório' })
+  @IsNumber({}, { message: 'Valor deve ser um número' })
+  @Min(0.01, { message: 'Valor deve ser maior que zero' })
+  @Transform(({ value }) => parseFloat(value))
+  amount: number;
+
+  @IsNotEmpty({ message: 'Data de recebimento é obrigatória' })
+  @IsDateString({}, { message: 'Data de recebimento inválida' })
+  receipt_date: string;
+
+  @IsOptional()
+  @IsIn(['salary', 'freelance', 'investment', 'sale', 'other'], {
+    message: 'Tipo de renda inválido',
+  })
+  income_type?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value) : null)
+  category_id?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === true || value === 'true' || value === 1)
+  is_recurring?: boolean;
+}
