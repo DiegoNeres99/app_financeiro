@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/app_config.dart';
 
 class ApiService {
@@ -7,7 +9,7 @@ class ApiService {
   factory ApiService() => _instance;
 
   late final Dio _dio;
-  final _storage = const FlutterSecureStorage();
+  final _storage = kIsWeb ? null : const FlutterSecureStorage();
 
   ApiService._internal() {
     _dio = Dio(BaseOptions(
@@ -21,7 +23,7 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await _storage.read(key: AppConfig.tokenKey);
+          final token = await getToken();
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
@@ -37,15 +39,29 @@ class ApiService {
   Dio get dio => _dio;
 
   Future<void> saveToken(String token) async {
-    await _storage.write(key: AppConfig.tokenKey, value: token);
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(AppConfig.tokenKey, token);
+    } else {
+      await _storage!.write(key: AppConfig.tokenKey, value: token);
+    }
   }
 
   Future<String?> getToken() async {
-    return _storage.read(key: AppConfig.tokenKey);
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(AppConfig.tokenKey);
+    }
+    return _storage!.read(key: AppConfig.tokenKey);
   }
 
   Future<void> clearToken() async {
-    await _storage.delete(key: AppConfig.tokenKey);
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(AppConfig.tokenKey);
+    } else {
+      await _storage!.delete(key: AppConfig.tokenKey);
+    }
   }
 
   Future<bool> isLoggedIn() async {

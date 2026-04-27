@@ -52,6 +52,9 @@ dependencies:
   # Snackbar / Toast
   fluttertoast: ^8.2.4
 
+  # Ícones de redes sociais (Google, Apple, etc.)
+  font_awesome_flutter: ^10.7.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
