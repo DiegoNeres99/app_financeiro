@@ -100,7 +100,7 @@ class _IncomeFormScreenState extends State<IncomeFormScreen> {
       }
 
       EasyLoading.dismiss();
-      if (mounted) Navigator.pop(context);
+      if (mounted) Navigator.pop(context, true);
     } catch (e) {
       EasyLoading.dismiss();
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: AppColors.expense));

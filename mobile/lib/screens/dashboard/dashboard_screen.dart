@@ -79,6 +79,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Future<void> _openRouteAndRefresh(String route, {Object? arguments}) async {
+    await Navigator.pushNamed(context, route, arguments: arguments);
+    if (mounted) _loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,13 +233,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 12),
         Row(
           children: [
-            _quickAction(Icons.add_circle_outline, 'Nova\nDespesa', AppColors.expense, () => Navigator.pushNamed(context, AppRoutes.expenseForm)),
+            _quickAction(Icons.add_circle_outline, 'Nova\nDespesa', AppColors.expense, () => _openRouteAndRefresh(AppRoutes.expenseForm)),
             const SizedBox(width: 12),
-            _quickAction(Icons.add_circle_outline, 'Nova\nRenda', AppColors.income, () => Navigator.pushNamed(context, AppRoutes.incomeForm)),
+            _quickAction(Icons.add_circle_outline, 'Nova\nRenda', AppColors.income, () => _openRouteAndRefresh(AppRoutes.incomeForm)),
             const SizedBox(width: 12),
-            _quickAction(Icons.credit_card, 'Cartões', AppColors.info, () => Navigator.pushNamed(context, AppRoutes.cards)),
+            _quickAction(Icons.credit_card, 'Cartões', AppColors.info, () => _openRouteAndRefresh(AppRoutes.cards)),
             const SizedBox(width: 12),
-            _quickAction(Icons.currency_bitcoin, 'Cripto', Colors.orange, () => Navigator.pushNamed(context, AppRoutes.cryptocurrencies)),
+            _quickAction(Icons.currency_bitcoin, 'Cripto', Colors.orange, () => _openRouteAndRefresh(AppRoutes.cryptocurrencies)),
           ],
         ),
         const SizedBox(height: 20),
@@ -242,10 +247,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _quickAction(IconData icon, String label, Color color, VoidCallback onTap) {
+  Widget _quickAction(IconData icon, String label, Color color, Future<void> Function() onTap) {
     return Expanded(
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () async {
+          await onTap();
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
@@ -286,7 +293,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildPlaceholder(String title, String route) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.pushNamed(context, route);
+      Navigator.pushNamed(context, route).then((_) {
+        if (mounted) _loadData();
+      });
       setState(() => _currentIndex = 0);
     });
     return const SizedBox.shrink();

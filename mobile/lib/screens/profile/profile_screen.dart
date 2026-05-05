@@ -98,8 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-    );
-    nameCtrl.dispose();
+    ).whenComplete(nameCtrl.dispose);
   }
 
   void _changePassword() {
