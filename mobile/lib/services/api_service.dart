@@ -10,6 +10,7 @@ class ApiService {
 
   late final Dio _dio;
   final _storage = kIsWeb ? null : const FlutterSecureStorage();
+  String? _sessionToken;
 
   ApiService._internal() {
     _dio = Dio(BaseOptions(
@@ -38,7 +39,19 @@ class ApiService {
 
   Dio get dio => _dio;
 
-  Future<void> saveToken(String token) async {
+  Future<void> saveToken(String token, {bool rememberMe = true}) async {
+    if (!rememberMe) {
+      _sessionToken = token;
+      if (kIsWeb) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(AppConfig.tokenKey);
+      } else {
+        await _storage!.delete(key: AppConfig.tokenKey);
+      }
+      return;
+    }
+
+    _sessionToken = null;
     if (kIsWeb) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConfig.tokenKey, token);
@@ -48,6 +61,9 @@ class ApiService {
   }
 
   Future<String?> getToken() async {
+    if (_sessionToken != null && _sessionToken!.isNotEmpty) {
+      return _sessionToken;
+    }
     if (kIsWeb) {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(AppConfig.tokenKey);
@@ -56,6 +72,7 @@ class ApiService {
   }
 
   Future<void> clearToken() async {
+    _sessionToken = null;
     if (kIsWeb) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(AppConfig.tokenKey);

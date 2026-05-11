@@ -35,6 +35,7 @@ class AuthService {
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
+    bool rememberMe = true,
   }) async {
     try {
       final response = await _api.dio.post('/auth/login', data: {
@@ -44,7 +45,7 @@ class AuthService {
 
       final data = response.data['data'] ?? response.data;
       if (data['token'] != null) {
-        await _api.saveToken(data['token']);
+        await _api.saveToken(data['token'], rememberMe: rememberMe);
       }
 
       return data;

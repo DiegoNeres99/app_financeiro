@@ -143,7 +143,50 @@ class _IncomesScreenState extends State<IncomesScreen> {
             '${income.incomeTypeLabel} · ${AppFormatters.date(income.receiptDate)}',
             style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Poppins'),
           ),
-          trailing: Text(AppFormatters.currency(income.amount), style: const TextStyle(color: AppColors.income, fontWeight: FontWeight.bold, fontFamily: 'Poppins')),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppFormatters.currency(income.amount),
+                style: const TextStyle(color: AppColors.income, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert, color: AppColors.textSecondary),
+                onSelected: (value) async {
+                  if (value == 'edit') {
+                    await Navigator.pushNamed(context, AppRoutes.incomeForm, arguments: income);
+                    _loadIncomes();
+                    return;
+                  }
+                  if (value == 'delete') {
+                    await _delete(income);
+                  }
+                },
+                itemBuilder: (_) => const [
+                  PopupMenuItem<String>(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit, size: 18),
+                        SizedBox(width: 8),
+                        Text('Editar'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, size: 18, color: AppColors.expense),
+                        SizedBox(width: 8),
+                        Text('Excluir', style: TextStyle(color: AppColors.expense)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           onTap: () async {
             await Navigator.pushNamed(context, AppRoutes.incomeForm, arguments: income);
             _loadIncomes();
